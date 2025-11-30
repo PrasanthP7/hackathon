@@ -14,9 +14,6 @@ const App: React.FC = () => {
         <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
           <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Live Preview</h2>
-            <p className="text-gray-500">
-              The chatbot below adapts instantly to the theme configuration on the left.
-            </p>
           </div>
           
           <ChatWindow />

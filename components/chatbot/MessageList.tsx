@@ -39,7 +39,7 @@ export const MessageList: React.FC<Props> = ({ messages, onWidgetResponse, isTyp
               <div className="flex flex-col gap-2">
                 {msg.content && (
                   <div
-                    className="p-3 text-sm rounded-theme shadow-sm whitespace-pre-wrap"
+                    className="p-3 rounded-theme shadow-theme whitespace-pre-wrap"
                     style={{
                       backgroundColor: msgStyle.backgroundColor,
                       color: msgStyle.textColor,

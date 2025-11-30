@@ -87,7 +87,7 @@ export const ThemeEditor: React.FC = () => {
                 Generate from Image
               </label>
               <p className="text-xs text-blue-700 mb-3">
-                Upload your brand logo or style guide. AI will extract colors and shapes.
+                Upload your Image.
               </p>
               
               <div className="relative">
@@ -149,22 +149,22 @@ export const ThemeEditor: React.FC = () => {
                </div>
             </div>
 
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
                <h3 className="text-sm font-bold text-gray-700 border-b pb-1">Widget Overrides</h3>
                <div className="space-y-3">
                  <div className="text-xs text-gray-500 italic">Customize specific widgets</div>
-                 
+                  */}
                  {/* Date Picker Override */}
-                 <div className="bg-gray-50 p-2 rounded border">
+                 {/* <div className="bg-gray-50 p-2 rounded border">
                     <span className="text-xs font-bold block mb-2">Date Picker</span>
                     <div className="grid grid-cols-2 gap-2">
                        <ColorInput label="Bg" value={theme.widgets.datePicker?.backgroundColor || theme.widgets.general.backgroundColor || '#fff'} onChange={(v) => handleColorChange('widgets.datePicker', 'backgroundColor', v)} />
                        <ColorInput label="Text" value={theme.widgets.datePicker?.textColor || theme.widgets.general.textColor || '#000'} onChange={(v) => handleColorChange('widgets.datePicker', 'textColor', v)} />
                     </div>
-                 </div>
+                 </div> */}
 
                  {/* Carousel Override */}
-                 <div className="bg-gray-50 p-2 rounded border">
+                 {/* <div className="bg-gray-50 p-2 rounded border">
                     <span className="text-xs font-bold block mb-2">Carousel</span>
                      <div className="grid grid-cols-2 gap-2">
                        <ColorInput label="Bg" value={theme.widgets.carousel?.backgroundColor || theme.widgets.general.backgroundColor || '#fff'} onChange={(v) => handleColorChange('widgets.carousel', 'backgroundColor', v)} />
@@ -173,7 +173,7 @@ export const ThemeEditor: React.FC = () => {
                  </div>
 
                </div>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -212,9 +212,6 @@ export const ThemeEditor: React.FC = () => {
             <RefreshCw size={18} />
             Reset to Defaults
           </button>
-        </div>
-        <div className="text-center mt-3">
-          <span className="text-[10px] text-gray-400">Powered by Google Gemini 2.5 Flash</span>
         </div>
       </div>
     </div>

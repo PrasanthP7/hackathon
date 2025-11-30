@@ -1,10 +1,9 @@
-
 import { GoogleGenAI, Schema, Type } from "@google/genai";
 import { Message, ThemeConfig } from "../types";
 import { DEFAULT_THEME } from "../constants";
 
 // WARNING: In a production app, never expose API keys on the client.
-const API_KEY =  'AIzaSyB5GbFjZ16O88vP8iw7txLS_bN3Qd6Lvfo'; 
+const API_KEY = "YOUR_GEMINI_API_KEY_HERE";
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
@@ -42,17 +41,20 @@ export const sendMessageToGemini = async (
   userMessage: string
 ): Promise<{ type: string; content: string; widgetData?: any }> => {
   if (!API_KEY) {
-    return { type: 'text', content: 'Error: API Key is missing. Check your environment variables.' };
+    return {
+      type: "text",
+      content: "Error: API Key is missing. Check your environment variables.",
+    };
   }
 
   try {
     const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       config: {
         systemInstruction: WIDGET_SYSTEM_INSTRUCTION,
-        responseMimeType: 'application/json',
+        responseMimeType: "application/json",
       },
-      history: history.map(h => ({
+      history: history.map((h) => ({
         role: h.role,
         parts: [{ text: h.content }],
       })),
@@ -60,13 +62,16 @@ export const sendMessageToGemini = async (
 
     const result = await chat.sendMessage({ message: userMessage });
     const responseText = result.text;
-    
+
     if (!responseText) throw new Error("No response");
 
     return JSON.parse(responseText);
   } catch (error) {
     console.error("Gemini Chat Error:", error);
-    return { type: 'text', content: "I'm having trouble connecting right now." };
+    return {
+      type: "text",
+      content: "I'm having trouble connecting right now.",
+    };
   }
 };
 
@@ -99,42 +104,67 @@ const THEME_SCHEMA: Schema = {
     components: {
       type: Type.OBJECT,
       properties: {
-        header: { type: Type.OBJECT, properties: { backgroundColor: { type: Type.STRING }, textColor: { type: Type.STRING } } },
-        botMessage: { type: Type.OBJECT, properties: { backgroundColor: { type: Type.STRING }, textColor: { type: Type.STRING } } },
-      }
-    }
+        header: {
+          type: Type.OBJECT,
+          properties: {
+            backgroundColor: { type: Type.STRING },
+            textColor: { type: Type.STRING },
+          },
+        },
+        botMessage: {
+          type: Type.OBJECT,
+          properties: {
+            backgroundColor: { type: Type.STRING },
+            textColor: { type: Type.STRING },
+            accentColor: { type: Type.STRING },
+          },
+        },
+        userMessage: {
+          type: Type.OBJECT,
+          properties: {
+            backgroundColor: { type: Type.STRING },
+            textColor: { type: Type.STRING },
+          },
+        },
+      },
+    },
   },
 };
 
-export const generateThemeFromImage = async (base64Image: string): Promise<ThemeConfig> => {
+export const generateThemeFromImage = async (
+  base64Image: string
+): Promise<ThemeConfig> => {
   if (!API_KEY) throw new Error("API Key missing");
 
-  const base64Data = base64Image.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
+  const base64Data = base64Image.replace(
+    /^data:image\/(png|jpeg|jpg|webp);base64,/,
+    ""
+  );
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       contents: {
         parts: [
           {
             inlineData: {
-              mimeType: 'image/png',
-              data: base64Data
-            }
+              mimeType: "image/png",
+              data: base64Data,
+            },
           },
           {
-            text: "Analyze this image. Create a UI theme JSON. Extract dominant colors. If image is dark, ensure text is light. Return JSON."
-          }
-        ]
+            text: "Analyze this image. Create a UI theme JSON. Extract dominant colors. If image is dark, ensure text is light. Return JSON.",
+          },
+        ],
       },
       config: {
-        responseMimeType: 'application/json',
-        responseSchema: THEME_SCHEMA
-      }
+        responseMimeType: "application/json",
+        responseSchema: THEME_SCHEMA,
+      },
     });
 
     const themeJson = JSON.parse(response.text || "{}");
-    
+
     // Merge with default to ensure complete structure
     return {
       ...DEFAULT_THEME,
@@ -143,14 +173,27 @@ export const generateThemeFromImage = async (base64Image: string): Promise<Theme
       components: {
         ...DEFAULT_THEME.components,
         ...themeJson.components,
-        // Ensure sub-objects exist if AI missed them
-        header: { ...DEFAULT_THEME.components.header, ...themeJson.components?.header },
-        botMessage: { ...DEFAULT_THEME.components.botMessage, ...themeJson.components?.botMessage }
+        header: {
+          ...DEFAULT_THEME.components.header,
+          ...themeJson.components?.header,
+        },
+        botMessage: {
+          ...DEFAULT_THEME.components.botMessage,
+          ...themeJson.components?.botMessage,
+          accentColor:
+            themeJson.components?.botMessage?.accentColor ||
+            themeJson.components?.botMessage?.backgroundColor || // fallback
+            DEFAULT_THEME.components.botMessage.accentColor ||
+            DEFAULT_THEME.components.botMessage.backgroundColor, // final fallback
+        },
+        userMessage: {
+          ...DEFAULT_THEME.components.userMessage,
+          ...themeJson.components?.userMessage,
+        },
       },
       // Reset specific widget overrides on new generation to let global colors take over
-      widgets: DEFAULT_THEME.widgets 
+      widgets: DEFAULT_THEME.widgets,
     };
-
   } catch (error) {
     console.error("Theme Gen Error:", error);
     throw error;
