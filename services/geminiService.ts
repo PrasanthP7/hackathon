@@ -3,7 +3,7 @@ import { Message, ThemeConfig } from "../types";
 import { DEFAULT_THEME } from "../constants";
 
 // WARNING: In a production app, never expose API keys on the client.
-const API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+const API_KEY = "";
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
@@ -31,10 +31,27 @@ You MUST return a JSON object (no markdown formatting).
 }
 
 Examples:
-- User: "Book a meeting." -> Response: { "type": "date_picker", "content": "Select a date.", "widgetData": { "title": "Select Date" } }
-- User: "Rate us." -> Response: { "type": "feedback", "content": "How was your experience?", "widgetData": { "title": "Rate our service" } }
-- User: "Upload ID." -> Response: { "type": "file_upload", "content": "Please upload your ID.", "widgetData": { "allowedTypes": ["image/*", ".pdf"] } }
-`;
+- User: "Book a meeting."
+  → { "type": "date_picker", "content": "Select a meeting date:", "widgetData": { "title": "Pick a date" } }
+
+- User: "Do you like pizza?"
+  → { "type": "quick_replies", "content": "Choose an answer:", "widgetData": { "options": ["Yes", "No"] } }
+
+- User: "Pick a country from Asia"
+  → { "type": "dropdown", "content": "Select a country:", "widgetData": { "title": "Country", "options": [{"label":"India","value":"IN"},{"label":"Japan","value":"JP"}] } }
+
+- User: "Show me mobile phones"
+  → { "type": "carousel", "content": "Here are some options:", "widgetData": { "items": [ { "title": "iPhone 15", "description": "Latest model", "imageUrl": "https://..." }, { "title": "Samsung S24", "description": "New release", "imageUrl": "https://..." } ] } }
+
+- User: "Fill my contact form"
+  → { "type": "form", "content": "Enter your information:", "widgetData": { "title": "Contact Info", "fields": [ { "name": "name", "label": "Full Name", "type": "text" }, { "name": "email", "label": "Email", "type": "email" } ] } }
+
+- User: "Rate our service"
+  → { "type": "feedback", "content": "How was your experience?", "widgetData": { "title": "Rate us" } }
+
+- User: "Upload my ID"
+  → { "type": "file_upload", "content": "Please upload your ID:", "widgetData": { "allowedTypes": ["image/*", ".pdf"] } }
+  `;
 
 export const sendMessageToGemini = async (
   history: Message[],
